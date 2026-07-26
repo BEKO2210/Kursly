@@ -84,8 +84,16 @@ svg { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width:
 .rate-summary small { color: var(--muted); font-size: 10px; }
 .rate-summary strong { margin-top: 4px; font-size: 13px; }
 .rate-summary span { margin-top: 3px; color: var(--muted); font-size: 10px; }
+.summary-actions { display: flex; flex: 0 0 auto; align-items: center; gap: 8px; }
 .share-button { flex: 0 0 auto; width: 41px; height: 41px; border-radius: 14px; }
 .share-button svg { width: 20px; height: 20px; }
+#favoriteButton svg { fill: none; transition: fill 160ms ease, color 160ms ease; }
+#favoriteButton.is-active { border-color: rgba(139, 255, 176, 0.4); color: var(--primary); background: rgba(139, 255, 176, 0.12); }
+#favoriteButton.is-active svg { fill: currentColor; }
+
+.favorite-tile { position: relative; }
+.favorite-remove { display: grid; place-items: center; flex: 0 0 auto; width: 22px; height: 22px; border-radius: 50%; color: var(--muted); background: rgba(255, 255, 255, 0.06); font-size: 11px; line-height: 1; }
+.favorite-remove:hover { color: var(--text); background: rgba(255, 255, 255, 0.14); }
 
 .section-block { margin-top: 34px; }
 .section-heading { display: flex; align-items: flex-end; justify-content: space-between; margin: 0 4px 14px; }

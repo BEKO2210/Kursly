@@ -42,7 +42,14 @@ const state = {
   apiDate: null,
   activeTarget: 'from',
   deferredInstall: null,
+  favorites: [],
 };
+
+try {
+  state.favorites = JSON.parse(localStorage.getItem('kursly-favorites') || '[]');
+} catch {
+  state.favorites = [];
+}
 
 const els = {
   amount: document.querySelector('#amount'),
@@ -62,6 +69,9 @@ const els = {
   connectionState: document.querySelector('#connectionState'),
   installButton: document.querySelector('#installButton'),
   toast: document.querySelector('#toast'),
+  favoriteButton: document.querySelector('#favoriteButton'),
+  favoritesSection: document.querySelector('#favoritesSection'),
+  favoritesGrid: document.querySelector('#favoritesGrid'),
 };
 
 const numberFormatter = new Intl.NumberFormat('de-DE', { maximumFractionDigits: 6 });
@@ -170,6 +180,7 @@ function updateConversion() {
   setCurrencyButton(els.fromCurrency, state.from);
   setCurrencyButton(els.toCurrency, state.to);
   persistState();
+  updateFavoriteButton();
 
   if (!state.rates || !state.rates[state.to]) return;
   const amount = parseAmount(els.amount.value);
@@ -177,6 +188,67 @@ function updateConversion() {
   const result = amount * rate;
   els.result.textContent = formatValue(result);
   els.rateLine.textContent = `1 ${state.from.toUpperCase()} = ${compactFormatter.format(rate)} ${state.to.toUpperCase()}`;
+}
+
+function favoriteKey(from, to) {
+  return `${from}-${to}`;
+}
+
+function isFavorite(from, to) {
+  return state.favorites.includes(favoriteKey(from, to));
+}
+
+function saveFavorites() {
+  localStorage.setItem('kursly-favorites', JSON.stringify(state.favorites));
+}
+
+function updateFavoriteButton() {
+  const active = isFavorite(state.from, state.to);
+  els.favoriteButton.classList.toggle('is-active', active);
+  els.favoriteButton.setAttribute('aria-pressed', String(active));
+  const label = active ? 'Favorit entfernen' : 'Favorit speichern';
+  els.favoriteButton.title = label;
+  els.favoriteButton.setAttribute('aria-label', label);
+}
+
+function toggleFavorite() {
+  const key = favoriteKey(state.from, state.to);
+  const index = state.favorites.indexOf(key);
+  if (index === -1) {
+    state.favorites.unshift(key);
+    showToast('Als Favorit gespeichert.');
+  } else {
+    state.favorites.splice(index, 1);
+    showToast('Favorit entfernt.');
+  }
+  saveFavorites();
+  updateFavoriteButton();
+  renderFavorites();
+}
+
+function removeFavorite(key) {
+  const index = state.favorites.indexOf(key);
+  if (index === -1) return;
+  state.favorites.splice(index, 1);
+  saveFavorites();
+  updateFavoriteButton();
+  renderFavorites();
+  showToast('Favorit entfernt.');
+}
+
+function renderFavorites() {
+  els.favoritesSection.hidden = state.favorites.length === 0;
+  els.favoritesGrid.innerHTML = state.favorites.map(key => {
+    const [from, to] = key.split('-');
+    return `
+      <button class="rate-tile favorite-tile" type="button" data-from="${from}" data-to="${to}">
+        <span class="rate-tile-top">
+          <span class="rate-tile-code"><span>${currencyIcon(from)}${currencyIcon(to)}</span><span><strong>${from.toUpperCase()} → ${to.toUpperCase()}</strong><small>${currencyName(from)} / ${currencyName(to)}</small></span></span>
+          <span class="favorite-remove" data-remove="${key}" role="button" aria-label="Favorit entfernen">✕</span>
+        </span>
+      </button>
+    `;
+  }).join('');
 }
 
 function formatApiDate(dateString) {
@@ -349,6 +421,21 @@ els.rateDate.addEventListener('change', async event => {
 });
 els.refreshButton.addEventListener('click', () => loadRates({ force: true }));
 els.shareButton.addEventListener('click', shareConversion);
+els.favoriteButton.addEventListener('click', toggleFavorite);
+els.favoritesGrid.addEventListener('click', async event => {
+  const removeTarget = event.target.closest('[data-remove]');
+  if (removeTarget) {
+    event.stopPropagation();
+    removeFavorite(removeTarget.dataset.remove);
+    return;
+  }
+  const tile = event.target.closest('[data-from]');
+  if (!tile) return;
+  state.from = tile.dataset.from;
+  state.to = tile.dataset.to;
+  await loadRates();
+  document.querySelector('.converter-card').scrollIntoView({ behavior: 'smooth', block: 'center' });
+});
 els.rateGrid.addEventListener('click', event => {
   const tile = event.target.closest('[data-code]');
   if (!tile) return;
@@ -371,6 +458,8 @@ async function init() {
   setCurrencyButton(els.fromCurrency, state.from);
   setCurrencyButton(els.toCurrency, state.to);
   registerServiceWorker();
+  renderFavorites();
+  updateFavoriteButton();
   await loadCurrencies();
   if (!state.currencies[state.from]) state.from = 'eur';
   if (!state.currencies[state.to]) state.to = 'usd';
