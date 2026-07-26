@@ -58,6 +58,7 @@ const els = {
   toCurrency: document.querySelector('#toCurrency'),
   swapButton: document.querySelector('#swapButton'),
   rateDate: document.querySelector('#rateDate'),
+  rateInfo: document.querySelector('#rateInfo'),
   rateLine: document.querySelector('#rateLine'),
   updatedLine: document.querySelector('#updatedLine'),
   currencyDialog: document.querySelector('#currencyDialog'),
@@ -72,12 +73,7 @@ const els = {
   favoriteButton: document.querySelector('#favoriteButton'),
   favoritesSection: document.querySelector('#favoritesSection'),
   favoritesGrid: document.querySelector('#favoritesGrid'),
-  historyCard: document.querySelector('#historyCard'),
-  historyChart: document.querySelector('#historyChart'),
-  historyLine: document.querySelector('#historyLine'),
-  historyChange: document.querySelector('#historyChange'),
-  historyMin: document.querySelector('#historyMin'),
-  historyMax: document.querySelector('#historyMax'),
+  quickAmounts: document.querySelector('.quick-amounts'),
 };
 
 const HISTORY_DAYS = 7;
@@ -148,6 +144,8 @@ async function loadCurrencies() {
 async function loadRates({ force = false } = {}) {
   const cacheKey = `kursly-rates-${state.date}-${state.from}`;
   els.updatedLine.textContent = 'Kurs wird geladen …';
+  els.rateInfo.classList.add('is-loading');
+  els.rateGrid.setAttribute('aria-busy', 'true');
   renderRateSkeletons();
 
   if (!force) {
@@ -178,9 +176,13 @@ async function loadRates({ force = false } = {}) {
       els.rateLine.textContent = 'Keine Kursdaten verfügbar';
       renderRateGrid();
     }
+    updateConversion();
     els.updatedLine.textContent = 'Offline · letzter gespeicherter Kurs';
     showToast('Live-Daten nicht erreichbar. Gespeicherte Werte werden verwendet.');
     console.error(error);
+  } finally {
+    els.rateInfo.classList.remove('is-loading');
+    els.rateGrid.setAttribute('aria-busy', 'false');
   }
 }
 
@@ -189,13 +191,27 @@ function updateConversion() {
   setCurrencyButton(els.toCurrency, state.to);
   persistState();
   updateFavoriteButton();
+  updateQuickAmountActive();
 
   if (!state.rates || !state.rates[state.to]) return;
   const amount = parseAmount(els.amount.value);
   const rate = state.rates[state.to];
   const result = amount * rate;
-  els.result.textContent = formatValue(result);
+  const formatted = formatValue(result);
+  if (els.result.textContent !== formatted) {
+    els.result.textContent = formatted;
+    els.result.classList.remove('flash');
+    void els.result.offsetWidth;
+    els.result.classList.add('flash');
+  }
   els.rateLine.textContent = `1 ${state.from.toUpperCase()} = ${compactFormatter.format(rate)} ${state.to.toUpperCase()}`;
+}
+
+function updateQuickAmountActive() {
+  const current = parseAmount(els.amount.value);
+  els.quickAmounts.querySelectorAll('[data-amount]').forEach(button => {
+    button.classList.toggle('is-active', parseAmount(button.dataset.amount) === current);
+  });
 }
 
 function favoriteKey(from, to) {
@@ -492,6 +508,7 @@ els.installButton.addEventListener('click', async () => {
 
 els.amount.value = state.amount;
 els.amount.addEventListener('input', updateConversion);
+els.amount.addEventListener('focus', () => els.amount.select());
 els.fromCurrency.addEventListener('click', () => openCurrencyDialog('from'));
 els.toCurrency.addEventListener('click', () => openCurrencyDialog('to'));
 els.currencySearch.addEventListener('input', event => renderCurrencyList(event.target.value));
