@@ -62,8 +62,11 @@ svg { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width:
 .money-field > input { appearance: textfield; }
 .money-field > input::-webkit-outer-spin-button, .money-field > input::-webkit-inner-spin-button { appearance: none; }
 .result-field > output { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--primary); }
-.currency-trigger { display: grid; grid-template-columns: auto auto auto; align-items: center; gap: 8px; min-width: 142px; padding: 10px; border: 1px solid var(--line); border-radius: 16px; color: var(--text); background: rgba(255, 255, 255, 0.055); cursor: pointer; text-align: left; }
+.result-field > output.flash { animation: result-flash 420ms ease; }
+@keyframes result-flash { from { opacity: 0.35; transform: translateY(3px); } to { opacity: 1; transform: none; } }
+.currency-trigger { display: grid; grid-template-columns: auto auto auto; align-items: center; gap: 8px; min-width: 142px; padding: 10px; border: 1px solid var(--line); border-radius: 16px; color: var(--text); background: rgba(255, 255, 255, 0.055); cursor: pointer; text-align: left; transition: transform 140ms ease, background 140ms ease; }
 .currency-trigger:hover { background: rgba(255, 255, 255, 0.09); }
+.currency-trigger:active { transform: scale(0.97); }
 .currency-trigger span:nth-child(2) { min-width: 0; }
 .currency-trigger strong, .currency-trigger small { display: block; }
 .currency-trigger strong { font-size: 14px; }
@@ -77,8 +80,10 @@ svg { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width:
 .swap-button:active { transform: rotate(180deg) scale(0.94); }
 .swap-button svg { width: 21px; height: 21px; stroke-width: 2.2; }
 .quick-amounts { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 13px; }
-.quick-amounts button { padding: 9px 4px; border: 1px solid var(--line); border-radius: 12px; color: var(--muted); background: rgba(255, 255, 255, 0.035); font-size: 12px; font-weight: 700; cursor: pointer; }
+.quick-amounts button { padding: 9px 4px; border: 1px solid var(--line); border-radius: 12px; color: var(--muted); background: rgba(255, 255, 255, 0.035); font-size: 12px; font-weight: 700; cursor: pointer; transition: transform 140ms ease, background 140ms ease, color 140ms ease, border-color 140ms ease; }
 .quick-amounts button:hover { color: var(--text); background: rgba(255, 255, 255, 0.08); }
+.quick-amounts button:active { transform: scale(0.94); }
+.quick-amounts button.is-active { color: var(--text); background: rgba(139, 255, 176, 0.14); border-color: rgba(139, 255, 176, 0.35); }
 .rate-summary { display: flex; align-items: flex-end; justify-content: space-between; gap: 14px; margin-top: 18px; padding: 0 2px; }
 .rate-summary small, .rate-summary strong, .rate-summary span { display: block; }
 .rate-summary small { color: var(--muted); font-size: 10px; }
@@ -109,6 +114,7 @@ svg { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width:
 .rate-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
 .rate-tile { padding: 15px; border: 1px solid var(--line); border-radius: 20px; color: inherit; background: rgba(255, 255, 255, 0.035); cursor: pointer; text-align: left; transition: transform 160ms ease, background 160ms ease; }
 .rate-tile:hover { transform: translateY(-2px); background: rgba(255, 255, 255, 0.065); }
+.rate-tile:active { transform: scale(0.97); }
 .rate-tile-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
 .rate-tile-code { display: flex; align-items: center; gap: 8px; }
 .rate-tile-code span:first-child { font-size: 20px; }
