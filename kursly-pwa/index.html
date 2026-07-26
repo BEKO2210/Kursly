@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#08111f" />
+    <meta name="description" content="Schneller Währungsrechner für Fiat, Kryptowährungen und Edelmetalle – als installierbare PWA." />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Kursly" />
+    <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="icon" href="icons/icon-192.png" />
+    <link rel="apple-touch-icon" href="icons/icon-192.png" />
+    <title>Kursly – Währungsrechner</title>
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <a class="brand" href="#" aria-label="Kursly Startseite">
+          <span class="brand-mark">K</span>
+          <span>
+            <strong>Kursly</strong>
+            <small>Währungen ohne Umwege</small>
+          </span>
+        </a>
+        <button class="icon-button" id="installButton" type="button" hidden aria-label="App installieren" title="App installieren">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v11m0 0 4-4m-4 4-4-4M5 16v3a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-3"/></svg>
+        </button>
+      </header>
+
+      <main>
+        <section class="hero" aria-labelledby="page-title">
+          <div>
+            <p class="eyebrow"><span class="live-dot"></span> Tagesaktuelle Referenzkurse</p>
+            <h1 id="page-title">Rechnen. Vergleichen.<br />Unterwegs entscheiden.</h1>
+            <p>Fiat, Krypto und Edelmetalle in einer schnellen, installierbaren Handy-App.</p>
+          </div>
+        </section>
+
+        <section class="converter-card" aria-label="Währungsrechner">
+          <div class="amount-header">
+            <label for="amount">Betrag</label>
+            <div class="date-wrap">
+              <label class="sr-only" for="rateDate">Kursdatum</label>
+              <input id="rateDate" type="date" />
+            </div>
+          </div>
+
+          <div class="money-field">
+            <input id="amount" inputmode="decimal" autocomplete="off" value="100" aria-label="Betrag" />
+            <button class="currency-trigger" id="fromCurrency" type="button" aria-haspopup="dialog">
+              <span class="currency-icon" data-role="flag">🇪🇺</span>
+              <span><strong data-role="code">EUR</strong><small data-role="name">Euro</small></span>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m8 10 4 4 4-4"/></svg>
+            </button>
+          </div>
+
+          <div class="swap-row">
+            <span></span>
+            <button id="swapButton" class="swap-button" type="button" aria-label="Währungen tauschen">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7h11m0 0-3-3m3 3-3 3M17 17H6m0 0 3 3m-3-3 3-3"/></svg>
+            </button>
+            <span></span>
+          </div>
+
+          <div class="money-field result-field">
+            <output id="result" aria-live="polite">114,07</output>
+            <button class="currency-trigger" id="toCurrency" type="button" aria-haspopup="dialog">
+              <span class="currency-icon" data-role="flag">🇺🇸</span>
+              <span><strong data-role="code">USD</strong><small data-role="name">US-Dollar</small></span>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m8 10 4 4 4-4"/></svg>
+            </button>
+          </div>
+
+          <div class="quick-amounts" aria-label="Schnellbeträge">
+            <button type="button" data-amount="10">10</button>
+            <button type="button" data-amount="50">50</button>
+            <button type="button" data-amount="100">100</button>
+            <button type="button" data-amount="500">500</button>
+          </div>
+
+          <div class="rate-summary">
+            <div>
+              <small>Referenzkurs</small>
+              <strong id="rateLine">1 EUR = 1,1407 USD</strong>
+              <span id="updatedLine">Kurs wird geladen …</span>
+            </div>
+            <button class="share-button" id="shareButton" type="button" aria-label="Umrechnung teilen">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16V3m0 0-4 4m4-4 4 4M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6"/></svg>
+            </button>
+          </div>
+        </section>
+
+        <section class="section-block" aria-labelledby="favorites-title">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Schnellzugriff</p>
+              <h2 id="favorites-title">Beliebte Kurse</h2>
+            </div>
+            <button id="refreshButton" class="text-button" type="button">Aktualisieren</button>
+          </div>
+          <div class="rate-grid" id="rateGrid" aria-live="polite"></div>
+        </section>
+
+        <section class="info-card">
+          <div class="info-icon">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 8v4m0 4h.01M10.3 3.8 2.7 17a2 2 0 0 0 1.7 3h15.2a2 2 0 0 0 1.7-3L13.7 3.8a2 2 0 0 0-3.4 0Z"/></svg>
+          </div>
+          <div>
+            <strong>Kein Bankkurs</strong>
+            <p>Die Werte sind Referenzkurse. Banken, Kartenanbieter und Wechselstuben können Gebühren und eigene Aufschläge berechnen.</p>
+          </div>
+        </section>
+      </main>
+
+      <footer>
+        <span id="connectionState">Online</span>
+        <span>•</span>
+        <span>Letzte Daten bleiben offline verfügbar</span>
+      </footer>
+    </div>
+
+    <dialog id="currencyDialog" class="currency-dialog">
+      <form method="dialog" class="dialog-sheet">
+        <div class="dialog-handle"></div>
+        <div class="dialog-header">
+          <div>
+            <p class="eyebrow">Auswahl</p>
+            <h2>Währung wählen</h2>
+          </div>
+          <button class="icon-button" value="cancel" aria-label="Schließen" type="submit">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg>
+          </button>
+        </div>
+        <label class="search-field">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m21 21-4.3-4.3m2.3-5.2A7.5 7.5 0 1 1 4 11.5a7.5 7.5 0 0 1 15 0Z"/></svg>
+          <input id="currencySearch" type="search" placeholder="EUR, Dollar, Bitcoin …" autocomplete="off" />
+        </label>
+        <div id="currencyList" class="currency-list"></div>
+      </form>
+    </dialog>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    <script type="module" src="app.js"></script>
+  </body>
+</html>
