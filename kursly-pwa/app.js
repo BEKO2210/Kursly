@@ -76,6 +76,8 @@ const els = {
   quickAmounts: document.querySelector('.quick-amounts'),
 };
 
+const HISTORY_DAYS = 7;
+
 const numberFormatter = new Intl.NumberFormat('de-DE', { maximumFractionDigits: 6 });
 const compactFormatter = new Intl.NumberFormat('de-DE', { maximumSignificantDigits: 6 });
 const dateFormatter = new Intl.DateTimeFormat('de-DE', { dateStyle: 'medium' });
@@ -334,6 +336,7 @@ async function selectCurrency(code) {
     }
   }
   els.currencyDialog.close();
+  loadHistory();
 }
 
 function renderRateSkeletons() {
@@ -358,6 +361,86 @@ function renderRateGrid() {
         <span class="rate-tile-value">${formatValue(state.rates[code])}</span>
       </button>
     `).join('');
+}
+
+function recentDateStrings(days) {
+  const dates = [];
+  const today = new Date();
+  for (let i = days - 1; i >= 0; i -= 1) {
+    const day = new Date(today.getTime() - i * 86_400_000 - today.getTimezoneOffset() * 60_000);
+    dates.push(day.toISOString().slice(0, 10));
+  }
+  return dates;
+}
+
+async function loadHistory() {
+  const from = state.from;
+  const to = state.to;
+  const cacheKey = `kursly-history-${from}-${to}`;
+  const today = recentDateStrings(1)[0];
+
+  const cached = localStorage.getItem(cacheKey);
+  if (cached) {
+    const parsed = JSON.parse(cached);
+    if (parsed.day === today && from === state.from && to === state.to) {
+      renderHistory(parsed.points);
+      return;
+    }
+  }
+
+  els.historyChange.textContent = 'Lädt …';
+  const dates = recentDateStrings(HISTORY_DAYS);
+  const values = await Promise.all(dates.map(async date => {
+    try {
+      const data = await fetchWithFallback(date, `currencies/${from}.min.json`);
+      const value = data?.[from]?.[to];
+      return typeof value === 'number' ? { date, value } : null;
+    } catch {
+      return null;
+    }
+  }));
+
+  const points = values.filter(Boolean);
+  if (from !== state.from || to !== state.to) return;
+
+  localStorage.setItem(cacheKey, JSON.stringify({ day: today, points }));
+  renderHistory(points);
+}
+
+function renderHistory(points) {
+  if (points.length < 2) {
+    els.historyCard.classList.add('is-empty');
+    els.historyLine.setAttribute('points', '');
+    els.historyChange.textContent = '–';
+    els.historyChange.classList.remove('positive', 'negative');
+    els.historyMin.textContent = 'Keine Verlaufsdaten verfügbar.';
+    els.historyMax.textContent = '';
+    return;
+  }
+
+  els.historyCard.classList.remove('is-empty');
+  const valuesOnly = points.map(point => point.value);
+  const min = Math.min(...valuesOnly);
+  const max = Math.max(...valuesOnly);
+  const range = max - min || 1;
+
+  const coords = points.map((point, index) => {
+    const x = (index / (points.length - 1)) * 300;
+    const y = 96 - ((point.value - min) / range) * 92;
+    return `${x.toFixed(1)},${y.toFixed(1)}`;
+  });
+  els.historyLine.setAttribute('points', coords.join(' '));
+
+  const first = valuesOnly[0];
+  const last = valuesOnly[valuesOnly.length - 1];
+  const change = first !== 0 ? ((last - first) / first) * 100 : 0;
+  const arrow = change >= 0 ? '▲' : '▼';
+  els.historyChange.textContent = `${arrow} ${Math.abs(change).toFixed(2)} %`;
+  els.historyChange.classList.toggle('positive', change >= 0);
+  els.historyChange.classList.toggle('negative', change < 0);
+
+  els.historyMin.textContent = `Tief ${formatValue(min)}`;
+  els.historyMax.textContent = `Hoch ${formatValue(max)}`;
 }
 
 function showToast(message) {
@@ -436,6 +519,7 @@ els.currencyList.addEventListener('click', event => {
 els.swapButton.addEventListener('click', async () => {
   [state.from, state.to] = [state.to, state.from];
   await loadRates();
+  loadHistory();
 });
 els.rateDate.addEventListener('change', async event => {
   const today = new Date().toISOString().slice(0, 10);
@@ -464,6 +548,7 @@ els.rateGrid.addEventListener('click', event => {
   if (!tile) return;
   state.to = tile.dataset.code;
   updateConversion();
+  loadHistory();
   document.querySelector('.converter-card').scrollIntoView({ behavior: 'smooth', block: 'center' });
 });
 document.querySelector('.quick-amounts').addEventListener('click', event => {
@@ -489,6 +574,7 @@ async function init() {
   setCurrencyButton(els.fromCurrency, state.from);
   setCurrencyButton(els.toCurrency, state.to);
   await loadRates();
+  loadHistory();
 }
 
 init();

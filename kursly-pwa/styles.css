@@ -125,6 +125,15 @@ svg { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width:
 .skeleton { min-height: 92px; background: linear-gradient(100deg, rgba(255,255,255,.03) 30%, rgba(255,255,255,.08) 50%, rgba(255,255,255,.03) 70%); background-size: 300% 100%; animation: shimmer 1.4s infinite; }
 @keyframes shimmer { from { background-position: 100% 0; } to { background-position: 0 0; } }
 
+.history-change { font-size: 11px; font-weight: 800; color: var(--muted); }
+.history-change.positive { color: var(--primary); }
+.history-change.negative { color: var(--danger); }
+.history-card { padding: 16px; border: 1px solid var(--line); border-radius: 20px; background: rgba(255, 255, 255, 0.035); }
+.history-chart { display: block; width: 100%; height: 90px; }
+.history-chart polyline { fill: none; stroke: var(--primary); stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+.history-card.is-empty .history-chart { display: none; }
+.history-meta { display: flex; justify-content: space-between; margin-top: 10px; color: var(--muted); font-size: 10px; font-weight: 700; }
+
 .info-card { display: flex; gap: 13px; margin-top: 28px; padding: 17px; border: 1px solid rgba(119, 168, 255, 0.18); border-radius: 20px; background: rgba(83, 126, 201, 0.08); }
 .info-icon { display: grid; place-items: center; flex: 0 0 auto; width: 36px; height: 36px; border-radius: 12px; color: var(--accent); background: rgba(119, 168, 255, 0.11); }
 .info-icon svg { width: 19px; height: 19px; }

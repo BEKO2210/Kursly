@@ -97,6 +97,25 @@
           </div>
         </section>
 
+        <section class="section-block" aria-labelledby="historyTitle">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Letzte 7 Tage</p>
+              <h2 id="historyTitle">Verlauf</h2>
+            </div>
+            <span class="history-change" id="historyChange" aria-live="polite">–</span>
+          </div>
+          <div class="history-card" id="historyCard">
+            <svg class="history-chart" id="historyChart" viewBox="0 0 300 100" preserveAspectRatio="none" aria-hidden="true">
+              <polyline id="historyLine" points="" />
+            </svg>
+            <div class="history-meta">
+              <span id="historyMin">–</span>
+              <span id="historyMax">–</span>
+            </div>
+          </div>
+        </section>
+
         <section class="section-block" id="favoritesSection" aria-labelledby="pinnedTitle" hidden>
           <div class="section-heading">
             <div>
