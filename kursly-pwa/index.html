@@ -81,10 +81,10 @@
           </div>
 
           <div class="rate-summary">
-            <div>
+            <div id="rateInfo">
               <small>Referenzkurs</small>
               <strong id="rateLine">1 EUR = 1,1407 USD</strong>
-              <span id="updatedLine">Kurs wird geladen …</span>
+              <span id="updatedLine" role="status" aria-live="polite">Kurs wird geladen …</span>
             </div>
             <div class="summary-actions">
               <button class="icon-button" id="favoriteButton" type="button" aria-pressed="false" aria-label="Favorit speichern" title="Favorit speichern">
@@ -115,7 +115,7 @@
             </div>
             <button id="refreshButton" class="text-button" type="button">Aktualisieren</button>
           </div>
-          <div class="rate-grid" id="rateGrid" aria-live="polite"></div>
+          <div class="rate-grid" id="rateGrid" aria-live="polite" aria-busy="false"></div>
         </section>
 
         <section class="info-card">
@@ -130,7 +130,7 @@
       </main>
 
       <footer>
-        <span id="connectionState">Online</span>
+        <span id="connectionState" role="status" aria-live="polite">Online</span>
         <span>•</span>
         <span>Letzte Daten bleiben offline verfügbar</span>
       </footer>
@@ -150,7 +150,7 @@
         </div>
         <label class="search-field">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m21 21-4.3-4.3m2.3-5.2A7.5 7.5 0 1 1 4 11.5a7.5 7.5 0 0 1 15 0Z"/></svg>
-          <input id="currencySearch" type="search" placeholder="EUR, Dollar, Bitcoin …" autocomplete="off" />
+          <input id="currencySearch" type="search" placeholder="EUR, Dollar, Bitcoin …" autocomplete="off" aria-label="Währung suchen" />
         </label>
         <div id="currencyList" class="currency-list"></div>
       </form>
