@@ -72,6 +72,7 @@ const els = {
   favoriteButton: document.querySelector('#favoriteButton'),
   favoritesSection: document.querySelector('#favoritesSection'),
   favoritesGrid: document.querySelector('#favoritesGrid'),
+  quickAmounts: document.querySelector('.quick-amounts'),
 };
 
 const numberFormatter = new Intl.NumberFormat('de-DE', { maximumFractionDigits: 6 });
@@ -181,13 +182,27 @@ function updateConversion() {
   setCurrencyButton(els.toCurrency, state.to);
   persistState();
   updateFavoriteButton();
+  updateQuickAmountActive();
 
   if (!state.rates || !state.rates[state.to]) return;
   const amount = parseAmount(els.amount.value);
   const rate = state.rates[state.to];
   const result = amount * rate;
-  els.result.textContent = formatValue(result);
+  const formatted = formatValue(result);
+  if (els.result.textContent !== formatted) {
+    els.result.textContent = formatted;
+    els.result.classList.remove('flash');
+    void els.result.offsetWidth;
+    els.result.classList.add('flash');
+  }
   els.rateLine.textContent = `1 ${state.from.toUpperCase()} = ${compactFormatter.format(rate)} ${state.to.toUpperCase()}`;
+}
+
+function updateQuickAmountActive() {
+  const current = parseAmount(els.amount.value);
+  els.quickAmounts.querySelectorAll('[data-amount]').forEach(button => {
+    button.classList.toggle('is-active', parseAmount(button.dataset.amount) === current);
+  });
 }
 
 function favoriteKey(from, to) {
@@ -403,6 +418,7 @@ els.installButton.addEventListener('click', async () => {
 
 els.amount.value = state.amount;
 els.amount.addEventListener('input', updateConversion);
+els.amount.addEventListener('focus', () => els.amount.select());
 els.fromCurrency.addEventListener('click', () => openCurrencyDialog('from'));
 els.toCurrency.addEventListener('click', () => openCurrencyDialog('to'));
 els.currencySearch.addEventListener('input', event => renderCurrencyList(event.target.value));
