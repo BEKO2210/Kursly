@@ -86,10 +86,25 @@
               <strong id="rateLine">1 EUR = 1,1407 USD</strong>
               <span id="updatedLine">Kurs wird geladen …</span>
             </div>
-            <button class="share-button" id="shareButton" type="button" aria-label="Umrechnung teilen">
-              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16V3m0 0-4 4m4-4 4 4M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6"/></svg>
-            </button>
+            <div class="summary-actions">
+              <button class="icon-button" id="favoriteButton" type="button" aria-pressed="false" aria-label="Favorit speichern" title="Favorit speichern">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 2.9 5.9 6.5.9-4.7 4.6 1.1 6.5L12 17.8l-5.8 3.1 1.1-6.5-4.7-4.6 6.5-.9L12 3Z"/></svg>
+              </button>
+              <button class="share-button" id="shareButton" type="button" aria-label="Umrechnung teilen">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16V3m0 0-4 4m4-4 4 4M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6"/></svg>
+              </button>
+            </div>
           </div>
+        </section>
+
+        <section class="section-block" id="favoritesSection" aria-labelledby="pinnedTitle" hidden>
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Gespeichert</p>
+              <h2 id="pinnedTitle">Favoriten</h2>
+            </div>
+          </div>
+          <div class="rate-grid" id="favoritesGrid" aria-live="polite"></div>
         </section>
 
         <section class="section-block" aria-labelledby="favorites-title">
