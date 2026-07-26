@@ -1,0 +1,21 @@
+{
+  "name": "Kursly – Währungsrechner",
+  "short_name": "Kursly",
+  "description": "Mobiler Währungsrechner für Fiat, Kryptowährungen und Edelmetalle.",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#07101d",
+  "theme_color": "#08111f",
+  "lang": "de-DE",
+  "orientation": "portrait-primary",
+  "categories": ["finance", "utilities", "travel"],
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    { "name": "EUR zu USD", "short_name": "EUR/USD", "url": "?from=eur&to=usd", "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }] },
+    { "name": "EUR zu ALL", "short_name": "EUR/ALL", "url": "?from=eur&to=all", "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }] }
+  ]
+}
