@@ -58,6 +58,7 @@ const els = {
   toCurrency: document.querySelector('#toCurrency'),
   swapButton: document.querySelector('#swapButton'),
   rateDate: document.querySelector('#rateDate'),
+  rateInfo: document.querySelector('#rateInfo'),
   rateLine: document.querySelector('#rateLine'),
   updatedLine: document.querySelector('#updatedLine'),
   currencyDialog: document.querySelector('#currencyDialog'),
@@ -140,6 +141,8 @@ async function loadCurrencies() {
 async function loadRates({ force = false } = {}) {
   const cacheKey = `kursly-rates-${state.date}-${state.from}`;
   els.updatedLine.textContent = 'Kurs wird geladen …';
+  els.rateInfo.classList.add('is-loading');
+  els.rateGrid.setAttribute('aria-busy', 'true');
   renderRateSkeletons();
 
   if (!force) {
@@ -170,9 +173,13 @@ async function loadRates({ force = false } = {}) {
       els.rateLine.textContent = 'Keine Kursdaten verfügbar';
       renderRateGrid();
     }
+    updateConversion();
     els.updatedLine.textContent = 'Offline · letzter gespeicherter Kurs';
     showToast('Live-Daten nicht erreichbar. Gespeicherte Werte werden verwendet.');
     console.error(error);
+  } finally {
+    els.rateInfo.classList.remove('is-loading');
+    els.rateGrid.setAttribute('aria-busy', 'false');
   }
 }
 

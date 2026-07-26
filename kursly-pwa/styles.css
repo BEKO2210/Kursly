@@ -85,6 +85,13 @@ svg { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width:
 .rate-summary strong { margin-top: 4px; font-size: 13px; }
 .rate-summary span { margin-top: 3px; color: var(--muted); font-size: 10px; }
 .summary-actions { display: flex; flex: 0 0 auto; align-items: center; gap: 8px; }
+#rateInfo.is-loading #updatedLine { position: relative; padding-left: 14px; }
+#rateInfo.is-loading #updatedLine::before {
+  position: absolute; left: 0; top: 50%; width: 8px; height: 8px; margin-top: -4px;
+  border: 2px solid rgba(139, 255, 176, 0.3); border-top-color: var(--primary); border-radius: 50%;
+  content: ""; animation: spin 700ms linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
 .share-button { flex: 0 0 auto; width: 41px; height: 41px; border-radius: 14px; }
 .share-button svg { width: 20px; height: 20px; }
 #favoriteButton svg { fill: none; transition: fill 160ms ease, color 160ms ease; }
