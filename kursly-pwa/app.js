@@ -74,6 +74,12 @@ const els = {
   favoritesSection: document.querySelector('#favoritesSection'),
   favoritesGrid: document.querySelector('#favoritesGrid'),
   quickAmounts: document.querySelector('.quick-amounts'),
+  historyCard: document.querySelector('#historyCard'),
+  historyChart: document.querySelector('#historyChart'),
+  historyLine: document.querySelector('#historyLine'),
+  historyChange: document.querySelector('#historyChange'),
+  historyMin: document.querySelector('#historyMin'),
+  historyMax: document.querySelector('#historyMax'),
 };
 
 const HISTORY_DAYS = 7;
